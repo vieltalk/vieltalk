@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VielTalk Lab - Developer Playground</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V7TL3MW9SM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-V7TL3MW9SM');
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
     <style>
         * {
@@ -885,6 +896,15 @@ console.<span class="code-function">log</span>(<span class="code-string">'Messag
                 const service = item.dataset.service;
                 document.getElementById('service-title').textContent = services[service].title;
                 document.getElementById('code-content').innerHTML = services[service].code;
+                
+                // Track service selection in GA4
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'service_selected', {
+                        'event_category': 'playground',
+                        'event_label': service,
+                        'service_name': services[service].title
+                    });
+                }
             });
         });
 
@@ -910,6 +930,16 @@ console.<span class="code-function">log</span>(<span class="code-string">'Messag
             
             const latency = Math.floor(Math.random() * 30) + 15;
             document.getElementById('latency').textContent = latency + 'ms';
+            
+            // Track code execution in GA4
+            if (typeof gtag !== 'undefined') {
+                const activeService = document.querySelector('.service-item.active').dataset.service;
+                gtag('event', 'code_executed', {
+                    'event_category': 'playground',
+                    'event_label': activeService,
+                    'execution_count': messagesSent
+                });
+            }
         }
 
         function clearOutput() {
