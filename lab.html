@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VielTalk Lab - Developer Playground</title>
     
-    <!-- Google tag (gtag.js) -->
+    <!-- Google Analytics 4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-V7TL3MW9SM"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'G-V7TL3MW9SM');
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-V7TL3MW9SM');
     </script>
     
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
@@ -585,6 +584,38 @@
                     </h4>
                     <p>Query language & API testing</p>
                 </div>
+
+                <div class="service-item" data-service="connection-pool">
+                    <h4>
+                        <i data-lucide="database"></i>
+                        Connection Pool
+                    </h4>
+                    <p>Database connection management</p>
+                </div>
+
+                <div class="service-item" data-service="thread-pool">
+                    <h4>
+                        <i data-lucide="cpu"></i>
+                        Thread Pool
+                    </h4>
+                    <p>Concurrent task execution</p>
+                </div>
+
+                <div class="service-item" data-service="retry-policy">
+                    <h4>
+                        <i data-lucide="refresh-cw"></i>
+                        Retry Policy
+                    </h4>
+                    <p>Exponential backoff & retries</p>
+                </div>
+
+                <div class="service-item" data-service="circuit-breaker">
+                    <h4>
+                        <i data-lucide="shield-alert"></i>
+                        Circuit Breaker
+                    </h4>
+                    <p>Fault tolerance & resilience</p>
+                </div>
             </div>
 
             <div class="playground">
@@ -885,6 +916,150 @@ console.<span class="code-function">log</span>(<span class="code-string">'Messag
   },
   body: JSON.<span class="code-function">stringify</span>({ query, variables: { roomId: <span class="code-string">'room_123'</span> } })
 });`
+            },
+            'connection-pool': {
+                title: 'Connection Pool Playground',
+                code: `<span class="code-keyword">const</span> { Pool } = <span class="code-keyword">require</span>(<span class="code-string">'pg'</span>);
+
+<span class="code-comment">// Create connection pool</span>
+<span class="code-keyword">const</span> pool = <span class="code-keyword">new</span> <span class="code-function">Pool</span>({
+  host: <span class="code-string">'localhost'</span>,
+  database: <span class="code-string">'vieltalk'</span>,
+  max: <span class="code-string">20</span>, <span class="code-comment">// Maximum pool size</span>
+  min: <span class="code-string">5</span>,  <span class="code-comment">// Minimum pool size</span>
+  idleTimeoutMillis: <span class="code-string">30000</span>,
+  connectionTimeoutMillis: <span class="code-string">2000</span>
+});
+
+<span class="code-comment">// Execute query using pool</span>
+<span class="code-keyword">const</span> result = <span class="code-keyword">await</span> pool.<span class="code-function">query</span>(
+  <span class="code-string">'SELECT * FROM messages WHERE room_id = $1'</span>,
+  [<span class="code-string">'room_123'</span>]
+);
+
+<span class="code-comment">// Pool automatically manages connections</span>
+console.<span class="code-function">log</span>(<span class="code-string">'Active connections:'</span>, pool.totalCount);
+console.<span class="code-function">log</span>(<span class="code-string">'Idle connections:'</span>, pool.idleCount);`
+            },
+            'thread-pool': {
+                title: 'Thread Pool Playground',
+                code: `<span class="code-keyword">const</span> { Worker, isMainThread, parentPort } = <span class="code-keyword">require</span>(<span class="code-string">'worker_threads'</span>);
+
+<span class="code-keyword">class</span> <span class="code-function">ThreadPool</span> {
+  <span class="code-function">constructor</span>(size) {
+    <span class="code-keyword">this</span>.size = size;
+    <span class="code-keyword">this</span>.workers = [];
+    <span class="code-keyword">this</span>.queue = [];
+    
+    <span class="code-comment">// Initialize worker pool</span>
+    <span class="code-keyword">for</span> (<span class="code-keyword">let</span> i = <span class="code-string">0</span>; i < size; i++) {
+      <span class="code-keyword">this</span>.workers.<span class="code-function">push</span>(<span class="code-keyword">this</span>.<span class="code-function">createWorker</span>());
+    }
+  }
+  
+  <span class="code-keyword">async</span> <span class="code-function">execute</span>(task) {
+    <span class="code-keyword">const</span> worker = <span class="code-keyword">await</span> <span class="code-keyword">this</span>.<span class="code-function">getAvailableWorker</span>();
+    <span class="code-keyword">return</span> worker.<span class="code-function">run</span>(task);
+  }
+}
+
+<span class="code-comment">// Create thread pool with 4 workers</span>
+<span class="code-keyword">const</span> pool = <span class="code-keyword">new</span> <span class="code-function">ThreadPool</span>(<span class="code-string">4</span>);
+
+<span class="code-comment">// Process messages in parallel</span>
+<span class="code-keyword">const</span> tasks = messages.<span class="code-function">map</span>(msg => 
+  pool.<span class="code-function">execute</span>(() => <span class="code-function">processMessage</span>(msg))
+);
+<span class="code-keyword">await</span> Promise.<span class="code-function">all</span>(tasks);`
+            },
+            'retry-policy': {
+                title: 'Retry Policy Playground',
+                code: `<span class="code-keyword">class</span> <span class="code-function">RetryPolicy</span> {
+  <span class="code-function">constructor</span>(options = {}) {
+    <span class="code-keyword">this</span>.maxRetries = options.maxRetries || <span class="code-string">3</span>;
+    <span class="code-keyword">this</span>.initialDelay = options.initialDelay || <span class="code-string">1000</span>;
+    <span class="code-keyword">this</span>.maxDelay = options.maxDelay || <span class="code-string">30000</span>;
+    <span class="code-keyword">this</span>.backoffMultiplier = options.backoffMultiplier || <span class="code-string">2</span>;
+  }
+  
+  <span class="code-keyword">async</span> <span class="code-function">execute</span>(fn) {
+    <span class="code-keyword">let</span> lastError;
+    
+    <span class="code-keyword">for</span> (<span class="code-keyword">let</span> attempt = <span class="code-string">0</span>; attempt <= <span class="code-keyword">this</span>.maxRetries; attempt++) {
+      <span class="code-keyword">try</span> {
+        <span class="code-keyword">return</span> <span class="code-keyword">await</span> <span class="code-function">fn</span>();
+      } <span class="code-keyword">catch</span> (error) {
+        lastError = error;
+        
+        <span class="code-keyword">if</span> (attempt < <span class="code-keyword">this</span>.maxRetries) {
+          <span class="code-keyword">const</span> delay = Math.<span class="code-function">min</span>(
+            <span class="code-keyword">this</span>.initialDelay * Math.<span class="code-function">pow</span>(<span class="code-keyword">this</span>.backoffMultiplier, attempt),
+            <span class="code-keyword">this</span>.maxDelay
+          );
+          
+          console.<span class="code-function">log</span>(<span class="code-string">\`Retry \${attempt + 1}/\${<span class="code-keyword">this</span>.maxRetries} in \${delay}ms\`</span>);
+          <span class="code-keyword">await</span> <span class="code-keyword">this</span>.<span class="code-function">sleep</span>(delay);
+        }
+      }
+    }
+    <span class="code-keyword">throw</span> lastError;
+  }
+}
+
+<span class="code-comment">// Use retry policy</span>
+<span class="code-keyword">const</span> retry = <span class="code-keyword">new</span> <span class="code-function">RetryPolicy</span>({ maxRetries: <span class="code-string">5</span> });
+<span class="code-keyword">const</span> result = <span class="code-keyword">await</span> retry.<span class="code-function">execute</span>(() => 
+  VielTalk.api.<span class="code-function">sendMessage</span>(messageData)
+);`
+            },
+            'circuit-breaker': {
+                title: 'Circuit Breaker Playground',
+                code: `<span class="code-keyword">class</span> <span class="code-function">CircuitBreaker</span> {
+  <span class="code-function">constructor</span>(options = {}) {
+    <span class="code-keyword">this</span>.failureThreshold = options.failureThreshold || <span class="code-string">5</span>;
+    <span class="code-keyword">this</span>.timeout = options.timeout || <span class="code-string">60000</span>;
+    <span class="code-keyword">this</span>.state = <span class="code-string">'CLOSED'</span>; <span class="code-comment">// CLOSED, OPEN, HALF_OPEN</span>
+    <span class="code-keyword">this</span>.failures = <span class="code-string">0</span>;
+    <span class="code-keyword">this</span>.nextAttempt = Date.<span class="code-function">now</span>();
+  }
+  
+  <span class="code-keyword">async</span> <span class="code-function">execute</span>(fn) {
+    <span class="code-keyword">if</span> (<span class="code-keyword">this</span>.state === <span class="code-string">'OPEN'</span>) {
+      <span class="code-keyword">if</span> (Date.<span class="code-function">now</span>() < <span class="code-keyword">this</span>.nextAttempt) {
+        <span class="code-keyword">throw</span> <span class="code-keyword">new</span> <span class="code-function">Error</span>(<span class="code-string">'Circuit breaker is OPEN'</span>);
+      }
+      <span class="code-keyword">this</span>.state = <span class="code-string">'HALF_OPEN'</span>;
+    }
+    
+    <span class="code-keyword">try</span> {
+      <span class="code-keyword">const</span> result = <span class="code-keyword">await</span> <span class="code-function">fn</span>();
+      <span class="code-keyword">this</span>.<span class="code-function">onSuccess</span>();
+      <span class="code-keyword">return</span> result;
+    } <span class="code-keyword">catch</span> (error) {
+      <span class="code-keyword">this</span>.<span class="code-function">onFailure</span>();
+      <span class="code-keyword">throw</span> error;
+    }
+  }
+  
+  <span class="code-function">onSuccess</span>() {
+    <span class="code-keyword">this</span>.failures = <span class="code-string">0</span>;
+    <span class="code-keyword">this</span>.state = <span class="code-string">'CLOSED'</span>;
+  }
+  
+  <span class="code-function">onFailure</span>() {
+    <span class="code-keyword">this</span>.failures++;
+    <span class="code-keyword">if</span> (<span class="code-keyword">this</span>.failures >= <span class="code-keyword">this</span>.failureThreshold) {
+      <span class="code-keyword">this</span>.state = <span class="code-string">'OPEN'</span>;
+      <span class="code-keyword">this</span>.nextAttempt = Date.<span class="code-function">now</span>() + <span class="code-keyword">this</span>.timeout;
+    }
+  }
+}
+
+<span class="code-comment">// Protect API calls with circuit breaker</span>
+<span class="code-keyword">const</span> breaker = <span class="code-keyword">new</span> <span class="code-function">CircuitBreaker</span>({ failureThreshold: <span class="code-string">3</span> });
+<span class="code-keyword">const</span> result = <span class="code-keyword">await</span> breaker.<span class="code-function">execute</span>(() => 
+  VielTalk.api.<span class="code-function">sendMessage</span>(data)
+);`
             }
         };
 
