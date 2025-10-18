@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VielTalk Developer Documentation</title>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #3eacfa 0%, #92d1fd 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .tagline {
+            font-size: 20px;
+            opacity: 0.95;
+            font-weight: 300;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .search-bar {
+            max-width: 600px;
+            margin: 40px auto;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 16px 50px 16px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #3eacfa;
+        }
+
+        .content {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        h2 {
+            font-size: 32px;
+            margin-bottom: 24px;
+            color: #1a1a1a;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e6f4ff 100%);
+            border-radius: 16px;
+            padding: 32px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(62, 172, 250, 0.25);
+            border-color: #3eacfa;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #3eacfa 0%, #92d1fd 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .quick-link {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background: #f0f9ff;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #3eacfa;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .quick-link:hover {
+            background: linear-gradient(135deg, #3eacfa 0%, #92d1fd 100%);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .quick-link i {
+            margin-right: 12px;
+        }
+
+        .code-block {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 24px;
+            border-radius: 12px;
+            margin: 24px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .api-key {
+            color: #92d1fd;
+        }
+
+        .api-string {
+            color: #a6e22e;
+        }
+
+        .feature-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #3eacfa 0%, #92d1fd 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-left: 12px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 40px 24px;
+            }
+
+            .logo {
+                font-size: 36px;
+            }
+
+            h2 {
+                font-size: 26px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">VielTalk</div>
+            <div class="tagline">Developer Documentation</div>
+            <div class="subtitle">Build powerful chat experiences with our messaging API</div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search documentation...">
+                <i data-lucide="search" class="search-icon"></i>
+            </div>
+        </header>
+
+        <div class="content">
+            <section class="section">
+                <h2>Getting Started</h2>
+                <p>Welcome to VielTalk's developer documentation. VielTalk is a modern chat application platform that lets you integrate real-time messaging, chat rooms, and communication features into your applications with ease.</p>
+                
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-icon">
+                            <i data-lucide="rocket"></i>
+                        </div>
+                        <h3>Quick Start</h3>
+                        <p>Get up and running in minutes with our step-by-step guide to integrating VielTalk chat features into your application.</p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-icon">
+                            <i data-lucide="book-open"></i>
+                        </div>
+                        <h3>API Reference</h3>
+                        <p>Complete reference documentation for all VielTalk API endpoints, chat operations, parameters, and responses.</p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-icon">
+                            <i data-lucide="code"></i>
+                        </div>
+                        <h3>SDKs & Libraries</h3>
+                        <p>Official SDKs for JavaScript, Python, Ruby, and more to streamline your chat integration process.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Chat Features <span class="feature-badge">Core APIs</span></h2>
+                <div class="quick-links">
+                    <a href="#" class="quick-link">
+                        <i data-lucide="key"></i>
+                        Authentication
+                    </a>
+                    <a href="#" class="quick-link">
+                        <i data-lucide="message-circle"></i>
+                        Real-time Messaging
+                    </a>
+                    <a href="#" class="quick-link">
+                        <i data-lucide="users"></i>
+                        Chat Rooms
+                    </a>
+                    <a href="#" class="quick-link">
+                        <i data-lucide="send"></i>
+                        Message Delivery
+                    </a>
+                    <a href="#" class="quick-link">
+                        <i data-lucide="image"></i>
+                        Media Sharing
+                    </a>
+                    <a href="#" class="quick-link">
+                        <i data-lucide="bell"></i>
+                        Push Notifications
+                    </a>
+                    <a href="#" class="quick-link">
+                        <i data-lucide="shield"></i>
+                        Security & Encryption
+                    </a>
+                    <a href="#" class="quick-link">
+                        <i data-lucide="user-check"></i>
+                        User Presence
+                    </a>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Code Example</h2>
+                <p>Here's a quick example to send your first message with VielTalk:</p>
+                <div class="code-block">
+<span class="api-key">const</span> VielTalk = <span class="api-key">require</span>(<span class="api-string">'vieltalk-sdk'</span>);
+
+<span class="api-key">const</span> client = <span class="api-key">new</span> VielTalk.Client({
+  <span class="api-key">apiKey</span>: <span class="api-string">'your_api_key_here'</span>
+});
+
+<span class="api-key">await</span> client.chat.sendMessage({
+  <span class="api-key">roomId</span>: <span class="api-string">'room_123'</span>,
+  <span class="api-key">message</span>: <span class="api-string">'Hello from VielTalk!'</span>,
+  <span class="api-key">userId</span>: <span class="api-string">'user_456'</span>
+});
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Additional Resources</h2>
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-icon">
+                            <i data-lucide="graduation-cap"></i>
+                        </div>
+                        <h3>Tutorials</h3>
+                        <p>Learn through practical examples: building chat rooms, implementing real-time messaging, and more.</p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-icon">
+                            <i data-lucide="life-buoy"></i>
+                        </div>
+                        <h3>Support</h3>
+                        <p>Get help from our support team or connect with the VielTalk developer community.</p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-icon">
+                            <i data-lucide="activity"></i>
+                        </div>
+                        <h3>API Status</h3>
+                        <p>Check real-time API status, messaging uptime, and performance metrics.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 VielTalk. Building the future of chat communication.</p>
+        </footer>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
