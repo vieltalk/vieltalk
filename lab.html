@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VielTalk Lab - Developer Playground</title>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #0a0e27;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3eacfa 0%, #92d1fd 100%);
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveGrid 20s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .tagline {
+            font-size: 18px;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .sidebar {
+            background: #1a1f3a;
+            border-radius: 16px;
+            padding: 24px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h3 {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .service-item {
+            background: #252b4a;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .service-item:hover {
+            background: #2d3454;
+            border-color: #3eacfa;
+            transform: translateX(4px);
+        }
+
+        .service-item.active {
+            background: linear-gradient(135deg, #3eacfa 0%, #92d1fd 100%);
+            border-color: #3eacfa;
+        }
+
+        .service-item h4 {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .service-item p {
+            color: #92d1fd;
+            font-size: 13px;
+        }
+
+        .service-item.active p {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .playground {
+            background: #1a1f3a;
+            border-radius: 16px;
+            padding: 32px;
+            min-height: 600px;
+        }
+
+        .playground-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #252b4a;
+        }
+
+        .playground-title {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #252b4a;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: #92d1fd;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #252b4a;
+            padding-bottom: 12px;
+        }
+
+        .tab {
+            background: transparent;
+            border: none;
+            color: #92d1fd;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background: #252b4a;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #3eacfa 0%, #92d1fd 100%);
+            color: white;
+        }
+
+        .code-editor {
+            background: #0a0e27;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .editor-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+
+        .code {
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .code-keyword { color: #92d1fd; }
+        .code-string { color: #4ade80; }
+        .code-function { color: #fbbf24; }
+        .code-comment { color: #6b7280; }
+
+        .output-panel {
+            background: #0a0e27;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 200px;
+        }
+
+        .output-header {
+            color: #92d1fd;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .output-content {
+            color: #4ade80;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .log-entry {
+            padding: 8px 12px;
+            background: #1a1f3a;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid #3eacfa;
+        }
+
+        .log-time {
+            color: #6b7280;
+            font-size: 11px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3eacfa 0%, #92d1fd 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(62, 172, 250, 0.4);
+        }
+
+        .btn-secondary {
+            background: #252b4a;
+            color: #92d1fd;
+        }
+
+        .btn-secondary:hover {
+            background: #2d3454;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .stat-card {
+            background: #252b4a;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #3eacfa;
+        }
+
+        .stat-label {
+            color: #92d1fd;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        footer {
+            background: #1a1f3a;
+            margin-top: 60px;
+            padding: 60px 0 30px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .sponsors-section {
+            margin-bottom: 50px;
+        }
+
+        .sponsors-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sponsors-title {
+            color: #92d1fd;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+
+        .become-sponsor-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #3eacfa 0%, #92d1fd 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .become-sponsor-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(62, 172, 250, 0.4);
+        }
+
+        .sponsors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .sponsor-card {
+            background: #252b4a;
+            padding: 24px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .sponsor-card:hover {
+            border-color: #3eacfa;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(62, 172, 250, 0.3);
+        }
+
+        .sponsor-logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .footer-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #252b4a, transparent);
+            margin: 40px 0;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            color: #92d1fd;
+        }
+
+        .copyright {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: #92d1fd;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        .made-with {
+            text-align: center;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .made-with span {
+            color: #ef4444;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .sponsors-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <img src="https://avatars.githubusercontent.com/u/225559606?v=4" alt="VielTalk" class="logo-img">
+            🧪 VielTalk Lab
+        </div>
+        <div class="tagline">Developer Playground - Test Real-time Services & APIs</div>
+    </div>
+
+    <div class="container">
+        <div class="main-grid">
+            <div class="sidebar">
+                <h3>
+                    <i data-lucide="flask-conical"></i>
+                    Services
+                </h3>
+                
+                <div class="service-item active" data-service="socketio">
+                    <h4>
+                        <i data-lucide="radio"></i>
+                        Socket.io
+                    </h4>
+                    <p>Real-time bidirectional communication</p>
+                </div>
+
+                <div class="service-item" data-service="facebook">
+                    <h4>
+                        <i data-lucide="share-2"></i>
+                        Facebook Graph API
+                    </h4>
+                    <p>Social media integration & data</p>
+                </div>
+
+                <div class="service-item" data-service="webhooks">
+                    <h4>
+                        <i data-lucide="webhook"></i>
+                        Webhooks
+                    </h4>
+                    <p>HTTP callbacks & event triggers</p>
+                </div>
+
+                <div class="service-item" data-service="websocket">
+                    <h4>
+                        <i data-lucide="cable"></i>
+                        WebSocket
+                    </h4>
+                    <p>Raw WebSocket connections</p>
+                </div>
+
+                <div class="service-item" data-service="rest">
+                    <h4>
+                        <i data-lucide="server"></i>
+                        REST API
+                    </h4>
+                    <p>RESTful endpoint testing</p>
+                </div>
+
+                <div class="service-item" data-service="graphql">
+                    <h4>
+                        <i data-lucide="git-graph"></i>
+                        GraphQL
+                    </h4>
+                    <p>Query language & API testing</p>
+                </div>
+            </div>
+
+            <div class="playground">
+                <div class="playground-header">
+                    <h2 class="playground-title" id="service-title">Socket.io Playground</h2>
+                    <div class="status-badge">
+                        <div class="status-dot"></div>
+                        <span>Connected</span>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active">Code</button>
+                    <button class="tab">Response</button>
+                    <button class="tab">Documentation</button>
+                </div>
+
+                <div class="code-editor">
+                    <div class="editor-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <div class="code" id="code-content">
+<span class="code-keyword">const</span> io = <span class="code-keyword">require</span>(<span class="code-string">'socket.io-client'</span>);
+
+<span class="code-comment">// Connect to VielTalk server</span>
+<span class="code-keyword">const</span> socket = io(<span class="code-string">'https://api.vieltalk.com'</span>, {
+  <span class="code-keyword">auth</span>: {
+    token: <span class="code-string">'your_api_key_here'</span>
+  }
+});
+
+<span class="code-comment">// Listen for messages</span>
+socket.<span class="code-function">on</span>(<span class="code-string">'message'</span>, (data) => {
+  console.<span class="code-function">log</span>(<span class="code-string">'Received:'</span>, data);
+});
+
+<span class="code-comment">// Send a message</span>
+socket.<span class="code-function">emit</span>(<span class="code-string">'chat'</span>, {
+  room: <span class="code-string">'general'</span>,
+  message: <span class="code-string">'Hello VielTalk!'</span>,
+  userId: <span class="code-string">'user_123'</span>
+});
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn" onclick="runCode()">
+                        <i data-lucide="play"></i>
+                        Run Code
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearOutput()">
+                        <i data-lucide="trash-2"></i>
+                        Clear Output
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i data-lucide="copy"></i>
+                        Copy Code
+                    </button>
+                </div>
+
+                <div class="output-panel" style="margin-top: 24px;">
+                    <div class="output-header">
+                        <i data-lucide="terminal"></i>
+                        Output Console
+                    </div>
+                    <div class="output-content" id="output">
+                        <div class="log-entry">
+                            <div class="log-time">00:00:01</div>
+                            <div>✓ Connected to VielTalk server</div>
+                        </div>
+                        <div class="log-entry">
+                            <div class="log-time">00:00:02</div>
+                            <div>✓ Authentication successful</div>
+                        </div>
+                        <div class="log-entry">
+                            <div class="log-time">00:00:03</div>
+                            <div>→ Ready to send/receive messages</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Latency</div>
+                        <div class="stat-value" id="latency">23ms</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Messages Sent</div>
+                        <div class="stat-value" id="sent">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Messages Received</div>
+                        <div class="stat-value" id="received">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Connection Time</div>
+                        <div class="stat-value" id="uptime">00:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="sponsors-section">
+                <div class="sponsors-header">
+                    <div class="sponsors-title">Sponsored By</div>
+                    <a href="https://opencollective.com/vieltalk" target="_blank" class="become-sponsor-btn">
+                        <i data-lucide="heart"></i>
+                        Become a Sponsor
+                    </a>
+                </div>
+                <div class="sponsors-grid">
+                    <div class="sponsor-card">
+                        <div class="sponsor-logo">GitHub</div>
+                    </div>
+                    <div class="sponsor-card">
+                        <div class="sponsor-logo">AWS</div>
+                    </div>
+                    <div class="sponsor-card">
+                        <div class="sponsor-logo">Vercel</div>
+                    </div>
+                    <div class="sponsor-card">
+                        <div class="sponsor-logo">Firebase</div>
+                    </div>
+                    <div class="sponsor-card">
+                        <div class="sponsor-logo">MongoDB</div>
+                    </div>
+                    <div class="sponsor-card">
+                        <div class="sponsor-logo">Redis</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-bottom">
+                <div class="copyright">
+                    <i data-lucide="copyright"></i>
+                    <span>2025 VielTalk. All rights reserved.</span>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Privacy Policy</a>
+                    <a href="#" class="footer-link">Terms of Service</a>
+                    <a href="#" class="footer-link">Documentation</a>
+                    <a href="#" class="footer-link">API Status</a>
+                    <a href="#" class="footer-link">Support</a>
+                </div>
+            </div>
+
+            <div class="made-with">
+                Made with <span>♥</span> for developers around the world
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const services = {
+            socketio: {
+                title: 'Socket.io Playground',
+                code: `<span class="code-keyword">const</span> io = <span class="code-keyword">require</span>(<span class="code-string">'socket.io-client'</span>);
+
+<span class="code-comment">// Connect to VielTalk server</span>
+<span class="code-keyword">const</span> socket = io(<span class="code-string">'https://api.vieltalk.com'</span>, {
+  <span class="code-keyword">auth</span>: {
+    token: <span class="code-string">'your_api_key_here'</span>
+  }
+});
+
+<span class="code-comment">// Listen for messages</span>
+socket.<span class="code-function">on</span>(<span class="code-string">'message'</span>, (data) => {
+  console.<span class="code-function">log</span>(<span class="code-string">'Received:'</span>, data);
+});
+
+<span class="code-comment">// Send a message</span>
+socket.<span class="code-function">emit</span>(<span class="code-string">'chat'</span>, {
+  room: <span class="code-string">'general'</span>,
+  message: <span class="code-string">'Hello VielTalk!'</span>,
+  userId: <span class="code-string">'user_123'</span>
+});`
+            },
+            facebook: {
+                title: 'Facebook Graph API Playground',
+                code: `<span class="code-keyword">const</span> axios = <span class="code-keyword">require</span>(<span class="code-string">'axios'</span>);
+
+<span class="code-comment">// Fetch user profile</span>
+<span class="code-keyword">const</span> response = <span class="code-keyword">await</span> axios.<span class="code-function">get</span>(
+  <span class="code-string">'https://graph.facebook.com/v18.0/me'</span>,
+  {
+    <span class="code-keyword">params</span>: {
+      fields: <span class="code-string">'id,name,email,picture'</span>,
+      access_token: <span class="code-string">'YOUR_ACCESS_TOKEN'</span>
+    }
+  }
+);
+
+<span class="code-comment">// Send to VielTalk</span>
+<span class="code-keyword">await</span> VielTalk.<span class="code-function">syncUser</span>({
+  facebookId: response.data.id,
+  name: response.data.name,
+  avatar: response.data.picture.data.url
+});`
+            },
+            webhooks: {
+                title: 'Webhooks Playground',
+                code: `<span class="code-keyword">const</span> express = <span class="code-keyword">require</span>(<span class="code-string">'express'</span>);
+<span class="code-keyword">const</span> app = <span class="code-function">express</span>();
+
+<span class="code-comment">// Webhook endpoint</span>
+app.<span class="code-function">post</span>(<span class="code-string">'/webhook'</span>, (req, res) => {
+  <span class="code-keyword">const</span> event = req.body;
+  
+  console.<span class="code-function">log</span>(<span class="code-string">'Event received:'</span>, event.type);
+  
+  <span class="code-keyword">if</span> (event.type === <span class="code-string">'message.sent'</span>) {
+    <span class="code-comment">// Handle new message</span>
+    <span class="code-function">processMessage</span>(event.data);
+  }
+  
+  res.<span class="code-function">json</span>({ received: <span class="code-keyword">true</span> });
+});
+
+app.<span class="code-function">listen</span>(<span class="code-string">3000</span>);`
+            },
+            websocket: {
+                title: 'WebSocket Playground',
+                code: `<span class="code-keyword">const</span> ws = <span class="code-keyword">new</span> <span class="code-function">WebSocket</span>(<span class="code-string">'wss://api.vieltalk.com/ws'</span>);
+
+<span class="code-comment">// Connection opened</span>
+ws.<span class="code-function">addEventListener</span>(<span class="code-string">'open'</span>, () => {
+  console.<span class="code-function">log</span>(<span class="code-string">'Connected!'</span>);
+  
+  <span class="code-comment">// Send authentication</span>
+  ws.<span class="code-function">send</span>(JSON.<span class="code-function">stringify</span>({
+    type: <span class="code-string">'auth'</span>,
+    token: <span class="code-string">'your_token'</span>
+  }));
+});
+
+<span class="code-comment">// Listen for messages</span>
+ws.<span class="code-function">addEventListener</span>(<span class="code-string">'message'</span>, (event) => {
+  <span class="code-keyword">const</span> data = JSON.<span class="code-function">parse</span>(event.data);
+  console.<span class="code-function">log</span>(<span class="code-string">'Message:'</span>, data);
+});`
+            },
+            rest: {
+                title: 'REST API Playground',
+                code: `<span class="code-keyword">const</span> axios = <span class="code-keyword">require</span>(<span class="code-string">'axios'</span>);
+
+<span class="code-comment">// Send a message via REST</span>
+<span class="code-keyword">const</span> response = <span class="code-keyword">await</span> axios.<span class="code-function">post</span>(
+  <span class="code-string">'https://api.vieltalk.com/v1/messages'</span>,
+  {
+    roomId: <span class="code-string">'room_123'</span>,
+    message: <span class="code-string">'Hello from REST!'</span>,
+    userId: <span class="code-string">'user_456'</span>
+  },
+  {
+    <span class="code-keyword">headers</span>: {
+      <span class="code-string">'Authorization'</span>: <span class="code-string">'Bearer YOUR_API_KEY'</span>,
+      <span class="code-string">'Content-Type'</span>: <span class="code-string">'application/json'</span>
+    }
+  }
+);
+
+console.<span class="code-function">log</span>(<span class="code-string">'Message sent:'</span>, response.data);`
+            },
+            graphql: {
+                title: 'GraphQL Playground',
+                code: `<span class="code-keyword">const</span> query = <span class="code-string">\`
+  query GetMessages($roomId: ID!) {
+    room(id: $roomId) {
+      messages(limit: 50) {
+        id
+        content
+        sender {
+          id
+          name
+          avatar
+        }
+        createdAt
+      }
+    }
+  }
+\`</span>;
+
+<span class="code-keyword">const</span> response = <span class="code-keyword">await</span> <span class="code-function">fetch</span>(<span class="code-string">'https://api.vieltalk.com/graphql'</span>, {
+  method: <span class="code-string">'POST'</span>,
+  headers: {
+    <span class="code-string">'Content-Type'</span>: <span class="code-string">'application/json'</span>,
+    <span class="code-string">'Authorization'</span>: <span class="code-string">'Bearer YOUR_API_KEY'</span>
+  },
+  body: JSON.<span class="code-function">stringify</span>({ query, variables: { roomId: <span class="code-string">'room_123'</span> } })
+});`
+            }
+        };
+
+        document.querySelectorAll('.service-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.service-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                const service = item.dataset.service;
+                document.getElementById('service-title').textContent = services[service].title;
+                document.getElementById('code-content').innerHTML = services[service].code;
+            });
+        });
+
+        let messagesSent = 0;
+        let messagesReceived = 0;
+        let startTime = Date.now();
+
+        function runCode() {
+            messagesSent++;
+            messagesReceived++;
+            document.getElementById('sent').textContent = messagesSent;
+            document.getElementById('received').textContent = messagesReceived;
+            
+            const output = document.getElementById('output');
+            const time = new Date().toLocaleTimeString();
+            const newLog = document.createElement('div');
+            newLog.className = 'log-entry';
+            newLog.innerHTML = `
+                <div class="log-time">${time}</div>
+                <div>✓ Code executed successfully</div>
+            `;
+            output.appendChild(newLog);
+            
+            const latency = Math.floor(Math.random() * 30) + 15;
+            document.getElementById('latency').textContent = latency + 'ms';
+        }
+
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '';
+        }
+
+        setInterval(() => {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('uptime').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }, 1000);
+    </script>
+</body>
+</html>
